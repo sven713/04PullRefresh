@@ -16,7 +16,7 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
     
     let cellID = "cellID"
     
-//    let dataSource = NSMutableArray
+    var dataSource = NSMutableArray()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,8 +26,11 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
         
         tableViewController.refreshControl = refreshControl // 给tableViewControlller添加 已经存在的 refreshControll
         self.refreshControl.addTarget(self, action: #selector(ViewController.addEmoji), forControlEvents: .ValueChanged)
+        self.refreshControl.attributedTitle = NSAttributedString(string:"Last update on \(NSData())")
         let tableViwe = tableViewController.tableView
         tableViwe.registerClass(UITableViewCell.self, forCellReuseIdentifier: cellID)
+//        tableViwe.delegate = self;
+        tableViwe.dataSource = self;
         self.view.addSubview(tableViwe)
     }
 
@@ -39,19 +42,20 @@ class ViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
     
     func addEmoji() ->  (){
         // 添加数组元素
-        
+        self.dataSource.addObjectsFromArray(["😁😝😀😀😀","😣😣😣😣🙃","😈😈😈😈😈"])
         self.tableViewController.tableView.reloadData()
         
         self.refreshControl.endRefreshing()
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        return dataSource.count;
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier(cellID)!
-        cell.textLabel?.text = String(indexPath.row)
+        cell.textLabel?.text = self.dataSource[indexPath.row] as? String
+        cell.textLabel?.textAlignment = NSTextAlignment.Center;
         return cell
     }
 }
